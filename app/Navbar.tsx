@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-import MediumLogo from "../public/images/logo.png";
+import MediumLogo from "../public/images/logo.svg";
 import Link from "next/link";
 
 const Navbar = () => {
