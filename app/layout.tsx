@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import localfont from "next/font/local";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 
 const myFont = localfont({
   src: "./sohne.otf",
