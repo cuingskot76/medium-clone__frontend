@@ -9,7 +9,6 @@ import SignIn from "@/components/SignIn";
 
 const Navbar = () => {
   const [isSignin, setIsSignin] = useState(false);
-
   return (
     <section className="relative bg-yellow max-w-screen-xl px-7 md:px-12 m-auto border-b border-dark">
       <div className="flex justify-between items-center h-20">
