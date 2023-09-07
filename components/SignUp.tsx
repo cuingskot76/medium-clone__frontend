@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
 import Link from "next/link";
+import React, { useState } from "react";
+import { Button } from "./ui/button";
 
 import GoogleIcon from "./icons/GoogleIcon";
 import FacebookIcon from "./icons/FacebookIcon";
-import TwitterIcon from "./icons/twitter.png";
 import Image from "next/image";
+import TwitterIcon from "./icons/twitter.png";
 
 const myFont = localFont({
   src: "../app/super.otf",
@@ -37,43 +35,44 @@ const sigInOptions = [
   },
 ];
 
-const SignIn = ({ setIsLogin, isLogin }: any) => {
+const handleSubmit = async (e: any) => {};
+
+const SignUp = ({ setIsLogin }: any) => {
   const [user, setUser] = useState({
+    username: "",
     email: "",
     password: "",
   });
 
-  const router = useRouter();
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/login`,
-      {
-        email: user.email,
-        password: user.password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-
-    router.push("/dashboard");
-  };
-
   return (
     <section>
       <p className={`text-3xl text-center ${myFont.className} mb-12`}>
-        Welcome back.
+        Join Medium.
       </p>
 
       <form className="space-y-3" onSubmit={handleSubmit}>
         <div>
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-neutral-600"
+          >
+            Username
+          </label>
+          <div className="mt-1">
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+              placeholder="Your Username"
+              className="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
+              value={user.username}
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-neutral-600"
@@ -117,7 +116,7 @@ const SignIn = ({ setIsLogin, isLogin }: any) => {
 
         <div>
           <Button className="flex w-full items-center justify-center px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Sign in
+            Sign up
           </Button>
         </div>
       </form>
@@ -147,38 +146,30 @@ const SignIn = ({ setIsLogin, isLogin }: any) => {
                 option.icon
               )}
             </div>
-            <span className="ml-2">Sign in with {option.name}</span>
+            <span className="ml-2">Sign up with {option.name}</span>
           </Button>
         ))}
       </div>
 
       <div className="text-center">
         <p className="py-10">
-          No account?
+          Already have an account?
           <Link
             href={"/"}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setIsLogin(false);
+              setIsLogin(true);
             }}
             className={`text-[#1A8917] ${myFont2.className}`}
           >
             {" "}
-            Create one
+            Sign in
           </Link>
         </p>
 
-        <p className="text-[#6B6B6B] text-[13px]">
-          Forgot email or trouble signing in?
-          <Link href={"/"} className="underline">
-            {" "}
-            Get help.
-          </Link>
-        </p>
-
-        <p className="pt-8 text-[#6B6B6B] text-[13px]">
-          Click “Sign In” to agree to Medium’s
+        <p className="pt-3 text-[#6B6B6B] text-[13px]">
+          Click “Sign Up” to agree to Medium’s
           <Link href={"/"} className="underline">
             {" "}
             Terms of Service{" "}
@@ -195,4 +186,4 @@ const SignIn = ({ setIsLogin, isLogin }: any) => {
   );
 };
 
-export default SignIn;
+export default SignUp;
