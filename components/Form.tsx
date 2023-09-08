@@ -1,30 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 
-const Form = ({ setIsCard, isLogin, setIsLogin }: any) => {
+const Form = ({ setIsCard, isAuth }: any) => {
+  console.log("auth", isAuth);
   return (
     <div
       className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          e.preventDefault();
           e.stopPropagation();
           setIsCard(false);
-          setIsLogin(false);
         } else {
           setIsCard(true);
         }
       }}
     >
       <div className="md:max-w-2xl w-full lg:h-[820px] bg-white shadow-lg py-11 px-14 h-screen m-auto">
-        {isLogin ? (
-          <SignIn setIsLogin={setIsLogin} isLogin={isLogin} />
-        ) : (
-          <SignUp setIsLogin={setIsLogin} isLogin={isLogin} />
+        {/* {isAuth ? <SignIn /> : <SignUp />} */}
+
+        {/* {isLogin && (
+          <SignIn setIsLogin={setIsLogin} setIsRegister={setIsRegister} />
         )}
+        {isRegister && (
+          <SignUp setIsRegister={setIsRegister} setIsLogin={setIsLogin} />
+        )} */}
       </div>
     </div>
   );

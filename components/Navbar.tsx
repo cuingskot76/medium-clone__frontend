@@ -11,10 +11,12 @@ import BellIcon from "./icons/BellIcon";
 import PencilIcon from "./icons/PencilIcon";
 import ChevronDownIcon from "./icons/ChevronDownIcon";
 import Form from "./Form";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
 const Navbar = () => {
-  const [card, setIsCard] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
 
   let decodeToken = null;
 
@@ -56,9 +58,8 @@ const Navbar = () => {
         </section>
       ) : (
         <section
-          className={`relative ${
-            !card && "max-w-screen-xl"
-          } px-7 md:px-12 m-auto`}
+          className={`relative ${!isRegister && !isLogin && "max-w-screen-xl"} 
+        px-7 md:px-12 m-auto`}
         >
           <div className="flex justify-between items-center h-20">
             <Image
@@ -81,43 +82,38 @@ const Navbar = () => {
               </div>
 
               <div className=" flex items-center gap-6 ml-6">
-                <p
-                  className={`text-sm ${!card && "cursor-pointer"}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsCard(true);
+                <button
+                  type="button"
+                  className={`text-sm ${isLogin && "cursor-default"}`}
+                  onClick={() => {
                     setIsLogin(true);
                   }}
                 >
                   Sign In
-                  {card && (
-                    <Form
-                      setIsCard={setIsCard}
-                      isLogin={isLogin}
+                  {isLogin && (
+                    <SignIn
                       setIsLogin={setIsLogin}
+                      setIsRegister={setIsRegister}
                     />
                   )}
-                </p>
-                <Button
-                  className={`text-sm rounded-full ${
-                    card && "text-inherit"
-                  } text-start cursor-default ${!card && "cursor-pointer"}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsCard(true);
+                </button>
+                <button
+                  type="button"
+                  className={`text-sm rounded-full text-start ${
+                    isRegister && "cursor-default"
+                  } bg-dark px-4 py-2`}
+                  onClick={() => {
+                    setIsRegister(true);
                   }}
                 >
-                  Get started
-                  {card && (
-                    <Form
-                      setIsCard={setIsCard}
-                      isLogin={isLogin}
+                  <span className="text-white">Get started</span>
+                  {isRegister && (
+                    <SignUp
+                      setIsRegister={setIsRegister}
                       setIsLogin={setIsLogin}
                     />
                   )}
-                </Button>
+                </button>
               </div>
             </nav>
           </div>
