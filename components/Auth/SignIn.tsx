@@ -1,24 +1,23 @@
 "use client";
 
-import localFont from "next/font/local";
-import Link from "next/link";
 import React, { useState } from "react";
-import { Button } from "./ui/button";
-
-import GoogleIcon from "./icons/GoogleIcon";
-import FacebookIcon from "./icons/FacebookIcon";
-import Image from "next/image";
-import TwitterIcon from "./icons/twitter.png";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
+import localFont from "next/font/local";
+import Link from "next/link";
+
+import GoogleIcon from "../icons/GoogleIcon";
+import FacebookIcon from "../icons/FacebookIcon";
+import TwitterIcon from "../icons/twitter.png";
+import Image from "next/image";
 
 const myFont = localFont({
-  src: "../app/super.otf",
+  src: "../../app/super.otf",
 });
 
 const myFont2 = localFont({
-  src: "../app/sohne-bold.otf",
+  src: "../../app/sohne-bold.otf",
 });
 
 const sigInOptions = [
@@ -38,9 +37,8 @@ const sigInOptions = [
   },
 ];
 
-const SignUp = ({ setIsRegister, setIsLogin }: any) => {
+const SignIn = ({ setIsLogin, setIsRegister }: any) => {
   const [user, setUser] = useState({
-    username: "",
     email: "",
     password: "",
   });
@@ -50,25 +48,19 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/register`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/login`,
+        JSON.stringify(user),
         {
-          username: user.username,
-          email: user.email,
-          password: user.password,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         }
       );
-      Swal.fire({
-        title: "Register Success",
-        text: "Please Login",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
-      setIsRegister(false);
-      setIsLogin(true);
+      router.push("/dashboard");
     } catch (error) {
       setError(error?.response?.data?.message || "An unknown error occurred");
     }
@@ -80,43 +72,20 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           e.stopPropagation();
-          setIsRegister(false);
+          setIsLogin(false);
         } else {
-          setIsRegister(true);
+          setIsLogin(true);
         }
       }}
     >
       <div className="md:max-w-2xl w-full lg:h-[820px] bg-white shadow-lg py-11 px-14 h-screen m-auto">
         <div>
           <p className={`text-3xl text-center ${myFont.className} mb-12`}>
-            Join Medium.
+            Welcome back.
           </p>
 
-          <form className="space-y-3" onSubmit={handleSubmit}>
+          <form className="space-y-3 text-start" onSubmit={handleSubmit}>
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-neutral-600"
-              >
-                Username
-              </label>
-              <div className="mt-1">
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  placeholder="Your Username"
-                  className="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
-                  value={user.username}
-                  onChange={(e) =>
-                    setUser({ ...user, username: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-neutral-600"
@@ -163,7 +132,7 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
 
             <div>
               <Button className="flex w-full items-center justify-center px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Sign up
+                Sign in
               </Button>
             </div>
           </form>
@@ -198,30 +167,38 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
                     option.icon
                   )}
                 </div>
-                <span className="ml-2">Sign up with {option.name}</span>
+                <span className="ml-2">Sign in with {option.name}</span>
               </Button>
             ))}
           </div>
 
           <div className="text-center">
             <p className="py-10">
-              Already have an account?
+              No account?
               <Link
                 href={"/"}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsRegister(false);
-                  setIsLogin(true);
+                  setIsLogin(false);
+                  setIsRegister(true);
                 }}
                 className={`text-[#1A8917] ${myFont2.className}`}
               >
                 {" "}
-                Sign in
+                Create one
               </Link>
             </p>
 
-            <p className="pt-3 text-[#6B6B6B] text-[13px]">
-              Click “Sign Up” to agree to Medium’s
+            <p className="text-[#6B6B6B] text-[13px]">
+              Forgot email or trouble signing in?
+              <Link href={"/"} className="underline">
+                {" "}
+                Get help.
+              </Link>
+            </p>
+
+            <p className="pt-8 text-[#6B6B6B] text-[13px]">
+              Click “Sign In” to agree to Medium’s
               <Link href={"/"} className="underline">
                 {" "}
                 Terms of Service{" "}
@@ -240,4 +217,4 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
   );
 };
 
-export default SignUp;
+export default SignIn;

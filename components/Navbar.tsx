@@ -5,14 +5,12 @@ import Image from "next/image";
 import MediumLogo from "../public/images/logo.svg";
 import MediumArtboard from "../public/images/artboard.svg";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import SearchIcon from "./icons/SearchIcon";
 import BellIcon from "./icons/BellIcon";
 import PencilIcon from "./icons/PencilIcon";
 import ChevronDownIcon from "./icons/ChevronDownIcon";
-import Form from "./Form";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
+import SignIn from "./Auth/SignIn";
+import SignUp from "./Auth/SignUp";
 
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
