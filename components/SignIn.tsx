@@ -42,32 +42,32 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    e.stopPropagation();
 
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/login`,
-      {
-        email: user.email,
-        password: user.password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-
-    router.push("/dashboard");
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/login`,
+        JSON.stringify(user),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      router.push("/dashboard");
+    } catch (error) {
+      setError(error?.response?.data?.message || "An unknown error occurred");
+    }
   };
 
   return (
-    <div
+    <section
       className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -79,7 +79,7 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
       }}
     >
       <div className="md:max-w-2xl w-full lg:h-[820px] bg-white shadow-lg py-11 px-14 h-screen m-auto">
-        <section>
+        <div>
           <p className={`text-3xl text-center ${myFont.className} mb-12`}>
             Welcome back.
           </p>
@@ -103,6 +103,7 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
                   value={user.email}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
                 />
+                {error && <p className="text-red-500 mt-1 text-sm">{error}</p>}
               </div>
             </div>
 
@@ -210,9 +211,9 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
               applies to you.
             </p>
           </div>
-        </section>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

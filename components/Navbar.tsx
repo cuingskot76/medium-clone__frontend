@@ -82,9 +82,8 @@ const Navbar = () => {
               </div>
 
               <div className=" flex items-center gap-6 ml-6">
-                <button
-                  type="button"
-                  className={`text-sm ${isLogin && "cursor-default"}`}
+                <p
+                  className={`text-sm ${!isLogin && "cursor-pointer"}`}
                   onClick={() => {
                     setIsLogin(true);
                   }}
@@ -96,11 +95,10 @@ const Navbar = () => {
                       setIsRegister={setIsRegister}
                     />
                   )}
-                </button>
-                <button
-                  type="button"
+                </p>
+                <p
                   className={`text-sm rounded-full text-start ${
-                    isRegister && "cursor-default"
+                    !isRegister && "cursor-pointer"
                   } bg-dark px-4 py-2`}
                   onClick={() => {
                     setIsRegister(true);
@@ -113,7 +111,7 @@ const Navbar = () => {
                       setIsLogin={setIsLogin}
                     />
                   )}
-                </button>
+                </p>
               </div>
             </nav>
           </div>

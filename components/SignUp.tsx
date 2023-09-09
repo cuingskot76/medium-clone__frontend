@@ -9,6 +9,9 @@ import GoogleIcon from "./icons/GoogleIcon";
 import FacebookIcon from "./icons/FacebookIcon";
 import Image from "next/image";
 import TwitterIcon from "./icons/twitter.png";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const myFont = localFont({
   src: "../app/super.otf",
@@ -35,17 +38,44 @@ const sigInOptions = [
   },
 ];
 
-const handleSubmit = async (e: any) => {};
-
 const SignUp = ({ setIsRegister, setIsLogin }: any) => {
   const [user, setUser] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+
+  const router = useRouter();
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/register`,
+        {
+          username: user.username,
+          email: user.email,
+          password: user.password,
+        }
+      );
+      Swal.fire({
+        title: "Register Success",
+        text: "Please Login",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setIsRegister(false);
+      setIsLogin(true);
+    } catch (error) {
+      setError(error?.response?.data?.message || "An unknown error occurred");
+    }
+  };
 
   return (
-    <div
+    <section
       className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -57,7 +87,7 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
       }}
     >
       <div className="md:max-w-2xl w-full lg:h-[820px] bg-white shadow-lg py-11 px-14 h-screen m-auto">
-        <section>
+        <div>
           <p className={`text-3xl text-center ${myFont.className} mb-12`}>
             Join Medium.
           </p>
@@ -104,6 +134,7 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
                   value={user.email}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
                 />
+                {error && <p className="text-red-500 mt-1 text-sm">{error}</p>}
               </div>
             </div>
 
@@ -203,9 +234,9 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
               applies to you.
             </p>
           </div>
-        </section>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
