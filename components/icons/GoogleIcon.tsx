@@ -3,7 +3,7 @@ import React from "react";
 const GoogleIcon = () => {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <g fill-rule="evenodd" clip-rule="evenodd">
+      <g fillRule="evenodd" clipRule="evenodd">
         <path
           d="M20.64 12.2c0-.63-.06-1.25-.16-1.84H12v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92a8.78 8.78 0 0 0 2.68-6.61z"
           fill="#4285F4"
