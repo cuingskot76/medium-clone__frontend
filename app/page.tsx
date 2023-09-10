@@ -3,6 +3,7 @@ import MediumHero from "@/components/icons/M.svg";
 import Image from "next/image";
 import localFont from "next/font/local";
 import Trending from "@/components/Home/Trending";
+import Blogs from "@/components/Home/Blogs";
 
 const myFont = localFont({
   src: "./super.otf",
@@ -38,6 +39,7 @@ export default function Home() {
 
       <div>
         <Trending />
+        <Blogs />
       </div>
     </section>
   );
