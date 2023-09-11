@@ -10,8 +10,9 @@ import FacebookIcon from "../icons/FacebookIcon";
 import Image from "next/image";
 import TwitterIcon from "../icons/twitter.png";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import EyeIcon from "../icons/EyeIcon";
+import EyeSlashIcon from "../icons/EyeSlashIcon";
 
 const myFont = localFont({
   src: "../../app/super.otf",
@@ -44,13 +45,18 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
 
-  const router = useRouter();
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [hidePassword, setHidePassword] = useState(true);
+
+  console.log(hidePassword);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
+      setEmailError("");
+      setUsernameError("");
       await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/register`,
         {
@@ -59,6 +65,7 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
           password: user.password,
         }
       );
+
       Swal.fire({
         title: "Register Success",
         text: "Please Login",
@@ -70,9 +77,14 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
       setIsRegister(false);
       setIsLogin(true);
     } catch (error) {
-      setError(error?.response?.data?.message || "An unknown error occurred");
+      if (error?.response?.status === 409) {
+        setUsernameError(error?.response?.data?.message);
+      } else if (error?.response?.status === 422) {
+        setEmailError(error?.response?.data?.message);
+      }
     }
   };
+  console.log(emailError, usernameError);
 
   return (
     <section
@@ -114,6 +126,9 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
                   }
                 />
               </div>
+              {usernameError && (
+                <p className="text-red-500 mt-1 text-sm">{usernameError}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -134,7 +149,15 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
                   value={user.email}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
                 />
-                {error && <p className="text-red-500 mt-1 text-sm">{error}</p>}
+                {emailError && (
+                  <p className="text-red-500 mt-1 text-sm">
+                    {emailError}. Try to{" "}
+                    <Link href={"/"} className="underline">
+                      Login
+                    </Link>{" "}
+                    instead
+                  </p>
+                )}
               </div>
             </div>
 
@@ -145,19 +168,26 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
               >
                 Password
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={hidePassword ? "password" : "text"}
                   required
+                  autoComplete="current-password"
                   placeholder="Your Password"
-                  className="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
+                  className=" block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
                   value={user.password}
                   onChange={(e) =>
                     setUser({ ...user, password: e.target.value })
                   }
                 />
+                <div
+                  className="absolute right-0 top-0 mt-3 mr-4 cursor-pointer"
+                  onClick={() => setHidePassword((prev) => !prev)}
+                >
+                  {hidePassword ? <EyeIcon /> : <EyeSlashIcon />}
+                </div>
               </div>
             </div>
 
