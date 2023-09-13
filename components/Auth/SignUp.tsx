@@ -50,8 +50,6 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
   const [emailError, setEmailError] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
-  console.log(hidePassword);
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
@@ -84,7 +82,6 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
       }
     }
   };
-  console.log(emailError, usernameError);
 
   return (
     <section
