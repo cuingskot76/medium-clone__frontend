@@ -8,6 +8,7 @@ const SearchIcon = ({ className }: any) => {
       viewBox="0 0 24 24"
       fill="none"
       className={className}
+      color="#6B6B6B"
     >
       <path
         fillRule="evenodd"
