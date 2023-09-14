@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import MediumLogo from "../public/images/logo.svg";
 import MediumArtboard from "../public/images/artboard.svg";
@@ -9,15 +9,28 @@ import SearchIcon from "./icons/SearchIcon";
 import BellIcon from "./icons/BellIcon";
 import PencilIcon from "./icons/PencilIcon";
 import ChevronDownIcon from "./icons/ChevronDownIcon";
-import SignIn from "./Auth/SignIn";
+import SignIn, { useStoreToken } from "./Auth/SignIn";
 import SignUp from "./Auth/SignUp";
+import { refreshToken } from "@/lib/TokenService";
+import jwt_decode from "jwt-decode";
+import { UserProps } from "@/types";
+import ArrowUp from "./icons/ArrowUp";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import ProfileIcon from "./icons/ProfileIcon";
+import LibraryIcon from "./icons/LibraryIcon";
+import StoryIcon from "./icons/StoryIcon";
+import StatsIcon from "./icons/StatsIcon";
+import StarIcon from "./icons/StarIcon";
 
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [scrollPos, setScrollPos] = useState(false);
+  const [token, setToken] = useState("");
+  const [decodeToken, setDecodeToken] = useState<UserProps>();
 
-  let decodeToken = null;
+  // initial token from signIn
+  const tokenInitial = useStoreToken((state) => state.token);
 
   const handleScroll = () => {
     const currentScrollPos = window.pageYOffset;
@@ -36,39 +49,176 @@ const Navbar = () => {
     };
   }, [scrollPos]);
 
+  // get new access token
+  const fetchToken = async () => {
+    const token = await refreshToken();
+    setToken(token);
+    setDecodeToken(jwt_decode(token));
+  };
+
+  useEffect(() => {
+    fetchToken();
+  }, []);
+
+  useEffect(() => {
+    if (tokenInitial) {
+      fetchToken();
+      setDecodeToken(jwt_decode(tokenInitial));
+    }
+  }, [tokenInitial]);
+
   return (
     <header>
-      {decodeToken ? (
-        <section className="px-6 py-1 border-b border-[#F2F2F2] flex">
-          <div className="gap-4 flex flex-1">
-            <Image
-              src={MediumArtboard}
-              alt="Medium Logo"
-              width={70}
-              height={70}
-            />
-
-            <div className="flex relative items-center">
-              <SearchIcon className="absolute mx-3 items-center flex" />
-              <input
-                type="text"
-                placeholder="Search Medium"
-                className="w-[240px] bg-[#F9F9F9] rounded-2xl py-2 pr-5 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-sky-100 focus:border-transparent"
-              />
-            </div>
+      {token ? (
+        <section>
+          <div className="sm:hidden flex justify-center items-center cursor-pointer h-10 border-b border-[#F2F2F2]">
+            <p className="mr-2 text-sm text-[#6B6B6B]">Open in app</p>
+            <ArrowUp />
           </div>
+          <div className="px-5 py-1 border-b border-[#F2F2F2] flex">
+            <div className="gap-4 flex flex-1">
+              <Link href="/">
+                <Image
+                  src={MediumArtboard}
+                  alt="Medium Logo"
+                  width={70}
+                  height={70}
+                />
+              </Link>
 
-          <div className="flex items-center m-auto">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <PencilIcon />
-              <span className="text-[#6b6b6b] text-sm">Write</span>
+              <div className="hidden sm:flex relative items-center">
+                <SearchIcon className="absolute mx-3 items-center flex" />
+                <input
+                  type="text"
+                  placeholder="Search Medium"
+                  className="w-[240px] bg-[#F9F9F9] rounded-2xl py-2 pr-5 pl-12 text-sm focus:outline-none focus:ring-2 focus:ring-sky-100 focus:border-transparent"
+                />
+              </div>
             </div>
-            <div className="mx-8 cursor-pointer">
-              <BellIcon />
-            </div>
-            <div className="w-full h-full flex items-center gap-2 cursor-pointer">
-              <div className="w-[32px] h-[32px] bg-sky-500 rounded-full"></div>
-              <ChevronDownIcon />
+
+            <div className="flex items-center m-auto">
+              <div className="hidden md:flex items-center gap-2 cursor-pointer">
+                <PencilIcon />
+                <span className="text-[#6b6b6b] text-sm">Write</span>
+              </div>
+              <div className="sm:hidden">
+                <SearchIcon className="items-center flex" />
+              </div>
+              <div className="mx-8 cursor-pointer">
+                <BellIcon />
+              </div>
+              <Popover>
+                <PopoverTrigger>
+                  <div className="w-full h-full flex items-center gap-2 cursor-pointer">
+                    <div className="w-[32px] h-[32px] border border-[#1A8917]  rounded-full flex items-center justify-center">
+                      {token && (
+                        <span>{decodeToken?.username.split("")[0]}</span>
+                      )}
+                    </div>
+                    <ChevronDownIcon />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="border-b border-[#F2F2F2] pb-4">
+                    <Link
+                      href="/"
+                      className="flex items-center gap-4 py-2 px-3"
+                    >
+                      <ProfileIcon />
+                      <span className="text-sm text-[#6B6B6B]">Profile</span>
+                    </Link>
+                    <Link
+                      href="/"
+                      className="flex items-center gap-4 py-2 px-3"
+                    >
+                      <LibraryIcon />
+                      <span className="text-sm text-[#6B6B6B]">Library</span>
+                    </Link>
+                    <Link
+                      href="/"
+                      className="flex items-center gap-4 py-2 px-3"
+                    >
+                      <StoryIcon />
+                      <span className="text-sm text-[#6B6B6B]">Stories</span>
+                    </Link>
+                    <Link
+                      href="/"
+                      className="flex items-center gap-4 py-2 px-3"
+                    >
+                      <StatsIcon />
+                      <span className="text-sm text-[#6B6B6B]">Stats</span>
+                    </Link>
+                  </div>
+
+                  <div className="pt-4 flex flex-col py-1 px-3 gap-3 border-b border-[#F2F2F2] pb-4">
+                    <Link href={"/"} className="">
+                      <p className="text-sm text-[#6B6B6B]">Settings</p>
+                    </Link>
+                    <Link href={"/"} className="">
+                      <p className="text-sm text-[#6B6B6B]">
+                        Refine recommendations
+                      </p>
+                    </Link>
+                    <Link href={"/"} className="">
+                      <p className="text-sm text-[#6B6B6B]">
+                        Manage publications
+                      </p>
+                    </Link>
+                    <Link href={"/"} className="">
+                      <p className="text-sm text-[#6B6B6B]">Help</p>
+                    </Link>
+                  </div>
+
+                  <div className="pt-4 flex flex-col gap-3 py-1 px-3 border-b border-[#F2F2F2] pb-4">
+                    <Link
+                      href={"/"}
+                      className="flex items-center justify-between"
+                    >
+                      <p className="text-sm text-[#6B6B6B]">Become a member</p>
+                      <span className="scale-125">
+                        <StarIcon />
+                      </span>
+                    </Link>
+                    <Link href={"/"}>
+                      <p className="text-sm text-[#6B6B6B]">
+                        Create a Mastodon account
+                      </p>
+                    </Link>
+                    <Link href={"/"}>
+                      <p className="text-sm text-[#6B6B6B]">
+                        Apply for author verification
+                      </p>
+                    </Link>
+                    <Link href={"/"}>
+                      <p className="text-sm text-[#6B6B6B]">
+                        Apply to Partner Program
+                      </p>
+                    </Link>
+                    <Link href={"/"}>
+                      <p className="text-sm text-[#6B6B6B]">
+                        Gift a membership
+                      </p>
+                    </Link>
+                  </div>
+
+                  <div className="pt-4 flex flex-col py-1 px-3">
+                    <Link href={"/"}>
+                      <p className="text-sm text-[#6B6B6B] ">Sign out</p>
+                      <span className="text-sm text-[#6B6B6B]">
+                        {decodeToken?.email.substring(0, 2) +
+                          "*".repeat(
+                            decodeToken?.email?.length!! -
+                              decodeToken?.email?.indexOf("@")!! -
+                              2
+                          ) +
+                          decodeToken?.email?.substring(
+                            decodeToken?.email?.indexOf("@")!!
+                          )}
+                      </span>
+                    </Link>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </section>
