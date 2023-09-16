@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
 import Link from "next/link";
@@ -12,7 +11,7 @@ import FacebookIcon from "../icons/FacebookIcon";
 import TwitterIcon from "../icons/twitter.png";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-import { create } from "zustand";
+import { axiosErrorHandling } from "@/utils/errorHandling";
 
 const myFont = localFont({
   src: "../../app/super.otf",
@@ -39,15 +38,6 @@ const sigInOptions = [
   },
 ];
 
-interface UserState {
-  token: string;
-}
-
-export const useStoreToken = create<UserState>((set) => ({
-  token: "",
-  setToken: (token: string) => set({ token }),
-}));
-
 const SignIn = ({ setIsLogin, setIsRegister }: any) => {
   const [user, setUser] = useState({
     email: "",
@@ -55,34 +45,17 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
   });
   const [error, setError] = useState("");
 
-  const router = useRouter();
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // signIn("credentials", {
-    //   email: user.email,
-    //   password: user.password,
-    // });
-
-    // router.push("/about");
-
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/login`,
-        JSON.stringify(user),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
-      useStoreToken.setState({ token: res.data.accessToken });
-      router.push("/dashboard");
+      signIn("credentials", {
+        email: user.email,
+        password: user.password,
+        redirect: false,
+      });
     } catch (error) {
-      setError(error?.response?.data?.message || "An unknown error occurred");
+      setError(axiosErrorHandling(error));
     }
   };
 
