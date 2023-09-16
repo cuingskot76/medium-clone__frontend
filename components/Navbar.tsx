@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import MediumLogo from "../public/images/logo.svg";
 import MediumArtboard from "../public/images/artboard.svg";
@@ -9,9 +9,8 @@ import SearchIcon from "./icons/SearchIcon";
 import BellIcon from "./icons/BellIcon";
 import PencilIcon from "./icons/PencilIcon";
 import ChevronDownIcon from "./icons/ChevronDownIcon";
-import SignIn, { useStoreToken } from "./Auth/SignIn";
+import SignIn from "./Auth/SignIn";
 import SignUp from "./Auth/SignUp";
-import { refreshToken } from "@/lib/TokenService";
 import jwt_decode from "jwt-decode";
 import { UserProps } from "@/types";
 import ArrowUp from "./icons/ArrowUp";
@@ -21,19 +20,15 @@ import LibraryIcon from "./icons/LibraryIcon";
 import StoryIcon from "./icons/StoryIcon";
 import StatsIcon from "./icons/StatsIcon";
 import StarIcon from "./icons/StarIcon";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [scrollPos, setScrollPos] = useState(false);
-  const [token, setToken] = useState("");
-  const [decodeToken, setDecodeToken] = useState<UserProps>();
-
-  // initial token from signIn
-  const tokenInitial = useStoreToken((state) => state.token);
 
   const handleScroll = () => {
-    const currentScrollPos = window.pageYOffset;
+    const currentScrollPos = window.scrollY;
     const maxScroll = currentScrollPos > 380;
     setScrollPos(maxScroll);
   };
@@ -49,27 +44,15 @@ const Navbar = () => {
     };
   }, [scrollPos]);
 
-  // get new access token
-  const fetchToken = async () => {
-    const token = await refreshToken();
-    setToken(token);
-    setDecodeToken(jwt_decode(token));
-  };
+  const { data: session } = useSession();
 
-  useEffect(() => {
-    fetchToken();
-  }, []);
-
-  useEffect(() => {
-    if (tokenInitial) {
-      fetchToken();
-      setDecodeToken(jwt_decode(tokenInitial));
-    }
-  }, [tokenInitial]);
+  const decodedToken: UserProps | null = session?.user?.accessToken
+    ? jwt_decode(session?.user?.accessToken)
+    : null;
 
   return (
     <header>
-      {token ? (
+      {decodedToken ? (
         <section>
           <div className="sm:hidden flex justify-center items-center cursor-pointer h-10 border-b border-[#F2F2F2]">
             <p className="mr-2 text-sm text-[#6B6B6B]">Open in app</p>
@@ -111,8 +94,8 @@ const Navbar = () => {
                 <PopoverTrigger>
                   <div className="w-full h-full flex items-center gap-2 cursor-pointer">
                     <div className="w-[32px] h-[32px] border border-[#1A8917]  rounded-full flex items-center justify-center">
-                      {token && (
-                        <span>{decodeToken?.username.split("")[0]}</span>
+                      {decodedToken && (
+                        <span>{decodedToken?.username?.split("")[0]}</span>
                       )}
                     </div>
                     <ChevronDownIcon />
@@ -202,17 +185,22 @@ const Navbar = () => {
                   </div>
 
                   <div className="pt-4 flex flex-col py-1 px-3">
-                    <Link href={"/"}>
+                    <Link
+                      href={"/"}
+                      onClick={() =>
+                        signOut({ redirect: false, callbackUrl: "/" })
+                      }
+                    >
                       <p className="text-sm text-[#6B6B6B] ">Sign out</p>
                       <span className="text-sm text-[#6B6B6B]">
-                        {decodeToken?.email.substring(0, 2) +
+                        {decodedToken?.email.substring(0, 2) +
                           "*".repeat(
-                            decodeToken?.email?.length!! -
-                              decodeToken?.email?.indexOf("@")!! -
+                            decodedToken?.email?.length!! -
+                              decodedToken?.email?.indexOf("@")!! -
                               2
                           ) +
-                          decodeToken?.email?.substring(
-                            decodeToken?.email?.indexOf("@")!!
+                          decodedToken?.email?.substring(
+                            decodedToken?.email?.indexOf("@")!!
                           )}
                       </span>
                     </Link>
