@@ -25,12 +25,12 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      {/* <Provider> */}
-      <body className={myFont.className}>
-        <Navbar />
-        {children}
-      </body>
-      {/* </Provider> */}
+      <Provider>
+        <body className={myFont.className}>
+          <Navbar />
+          {children}
+        </body>
+      </Provider>
     </html>
   );
 }
