@@ -4,3 +4,11 @@ export interface UserProps {
   username: string;
   exp: number;
 }
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      accessToken: string;
+    };
+  }
+}
