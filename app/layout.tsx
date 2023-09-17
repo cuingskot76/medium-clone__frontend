@@ -27,7 +27,7 @@ export default function RootLayout({
       </head>
       <Provider>
         <body className={myFont.className}>
-          <Navbar />
+          {/* <Navbar /> */}
           {children}
         </body>
       </Provider>
