@@ -5,6 +5,8 @@ import localFont from "next/font/local";
 import { blogTags, discoverTags, dummyBlogs } from "@/constants";
 import Image from "next/image";
 import Bookmark from "../icons/Bookmark";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Skeleton } from "../ui/skeleton";
 
 const myFontBold = localFont({
   src: "../../app/sohne-bold.otf",
@@ -66,14 +68,22 @@ const Blogs = () => {
               >
                 <div className="flex-1">
                   <div className="gap-2 flex items-center mb-2">
-                    <div className="w-5 h-5">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage
+                        src="https://github.com/shadcn.png"
+                        alt={blog?.title}
+                      />
+                      {/* <AvatarFallback>{blog?.author}</AvatarFallback> */}
+                      <Skeleton className="h-8 w-8 rounded-full bg-slate-300" />
+                    </Avatar>
+                    {/* <div className="w-5 h-5">
                       <Image
                         src={blog.image}
                         alt={blog.title}
                         width={20}
                         height={20}
                       />
-                    </div>
+                    </div> */}
                     <span className="text-sm">{blog.author}</span>
                   </div>
                   <h3
