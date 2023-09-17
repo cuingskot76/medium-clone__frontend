@@ -21,6 +21,7 @@ import StoryIcon from "./icons/StoryIcon";
 import StatsIcon from "./icons/StatsIcon";
 import StarIcon from "./icons/StarIcon";
 import { signOut, useSession } from "next-auth/react";
+import { Skeleton } from "./ui/skeleton";
 
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -44,11 +45,28 @@ const Navbar = () => {
     };
   }, [scrollPos]);
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return (
+      <div className="flex justify-between relative bg-yellow">
+        <Skeleton className="w-10 h-10 rounded-sm bg-slate-200" />
+        <div>
+          <Skeleton className="w-6" />
+          <Skeleton className="w-6" />
+          <Skeleton className="w-6" />
+          <Skeleton className="w-6" />
+        </div>
+      </div>
+    );
+  }
 
   const decodedToken: UserProps | null = session?.user?.accessToken
     ? jwt_decode(session?.user?.accessToken)
     : null;
+
+  console.log("decodedToken", decodedToken);
+  console.log("session home", session);
 
   return (
     <header>
@@ -187,13 +205,14 @@ const Navbar = () => {
                   <div className="pt-4 flex flex-col py-1 px-3">
                     <Link
                       href={"/"}
-                      onClick={() =>
-                        signOut({ redirect: false, callbackUrl: "/" })
+                      onClick={
+                        () => signOut()
+                        // signOut({ redirect: false, callbackUrl: "/" })
                       }
                     >
                       <p className="text-sm text-[#6B6B6B] ">Sign out</p>
                       <span className="text-sm text-[#6B6B6B]">
-                        {decodedToken?.email.substring(0, 2) +
+                        {decodedToken?.email?.substring(0, 2) +
                           "*".repeat(
                             decodedToken?.email?.length!! -
                               decodedToken?.email?.indexOf("@")!! -
