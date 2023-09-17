@@ -45,32 +45,37 @@ const Navbar = () => {
     };
   }, [scrollPos]);
 
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
   if (status === "loading") {
     return (
-      <div className="flex justify-between relative bg-yellow">
-        <Skeleton className="w-10 h-10 rounded-sm bg-slate-200" />
-        <div>
-          <Skeleton className="w-6" />
-          <Skeleton className="w-6" />
-          <Skeleton className="w-6" />
-          <Skeleton className="w-6" />
+      <div className="flex justify-between px-5 items-center">
+        <div className="flex gap-5 items-center mt-3">
+          <Skeleton className="w-14 h-10 rounded-sm bg-slate-200" />
+          <Skeleton
+            placeholder="hello"
+            className="w-[240px] h-10 rounded-2xl py-2 pr-5 pl-12 bg-slate-200"
+          />
+        </div>
+        <div className="flex items-center">
+          <Skeleton className="w-16 h-7 rounded-md bg-slate-200" />
+          <Skeleton className="w-10 h-8 rounded-md bg-slate-200 mx-8" />
+          <Skeleton className="w-10 h-10 rounded-full bg-slate-200" />
         </div>
       </div>
     );
   }
 
-  const decodedToken: UserProps | null = session?.user?.accessToken
-    ? jwt_decode(session?.user?.accessToken)
-    : null;
+  // const decodedToken: UserProps | null = session?.user?.accessToken
+  //   ? jwt_decode(session?.user?.accessToken)
+  //   : null;
 
-  console.log("decodedToken", decodedToken);
-  console.log("session home", session);
+  // console.log("decodedToken", decodedToken);
+  // console.log("session home", session);
 
   return (
     <header>
-      {decodedToken ? (
+      {session?.user.email ? (
         <section>
           <div className="sm:hidden flex justify-center items-center cursor-pointer h-10 border-b border-[#F2F2F2]">
             <p className="mr-2 text-sm text-[#6B6B6B]">Open in app</p>
@@ -112,8 +117,8 @@ const Navbar = () => {
                 <PopoverTrigger>
                   <div className="w-full h-full flex items-center gap-2 cursor-pointer">
                     <div className="w-[32px] h-[32px] border border-[#1A8917]  rounded-full flex items-center justify-center">
-                      {decodedToken && (
-                        <span>{decodedToken?.username?.split("")[0]}</span>
+                      {session.user.username && (
+                        <span>{session.user.username?.split("")[0]}</span>
                       )}
                     </div>
                     <ChevronDownIcon />
@@ -212,14 +217,14 @@ const Navbar = () => {
                     >
                       <p className="text-sm text-[#6B6B6B] ">Sign out</p>
                       <span className="text-sm text-[#6B6B6B]">
-                        {decodedToken?.email?.substring(0, 2) +
+                        {session.user?.email?.substring(0, 2) +
                           "*".repeat(
-                            decodedToken?.email?.length!! -
-                              decodedToken?.email?.indexOf("@")!! -
+                            session.user?.email?.length!! -
+                              session.user?.email?.indexOf("@")!! -
                               2
                           ) +
-                          decodedToken?.email?.substring(
-                            decodedToken?.email?.indexOf("@")!!
+                          session.user?.email?.substring(
+                            session.user?.email?.indexOf("@")!!
                           )}
                       </span>
                     </Link>
