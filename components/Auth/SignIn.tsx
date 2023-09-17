@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import localFont from "next/font/local";
 import Link from "next/link";
 
@@ -52,7 +51,8 @@ const SignIn = ({ setIsLogin, setIsRegister }: any) => {
       signIn("credentials", {
         email: user.email,
         password: user.password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/dashboard",
       });
     } catch (error) {
       setError(axiosErrorHandling(error));
