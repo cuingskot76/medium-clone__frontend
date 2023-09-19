@@ -3,31 +3,64 @@ import DefaultImage from "../components/icons/twitter.png";
 
 const blogTags = [
   {
-    name: "Programming",
+    name: "programming",
   },
   {
-    name: "Data Science",
+    name: "data science",
   },
   {
-    name: "Technology",
+    name: "technology",
   },
   {
-    name: "Self Improvement",
+    name: "self improvement",
   },
   {
-    name: "Writing",
+    name: "writing",
   },
   {
-    name: "Relationships",
+    name: "relationships",
   },
   {
-    name: "Machine Learning",
+    name: "machine learning",
   },
   {
-    name: "Productivity",
+    name: "productivity",
   },
   {
-    name: "Politics",
+    name: "politics",
+  },
+];
+
+const allTags = [
+  {
+    name: "artificial intelligence",
+  },
+  {
+    name: "technology",
+  },
+  {
+    name: "machine learning",
+  },
+  {
+    name: "ai",
+  },
+  {
+    name: "data science",
+  },
+  {
+    name: "deep learning",
+  },
+  {
+    name: "chatGPT",
+  },
+  {
+    name: "business",
+  },
+  {
+    name: "programming",
+  },
+  {
+    name: "future",
   },
 ];
 
@@ -297,4 +330,5 @@ export {
   dummyBlogs,
   discoverTags,
   suggestUserFollow,
+  allTags,
 };
