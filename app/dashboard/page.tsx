@@ -198,7 +198,9 @@ const Dashboard = async () => {
                       variant={"outline"}
                       className="text-sm text-dark mr-2 bg-[#f2f2f2] py-2 px-4 border border-[#f2f2f2] rounded-full gap-2 mb-2"
                     >
-                      {tag.name}
+                      <Link href={`/tag/${tag.name.replace(/\s+/g, "-")}`}>
+                        {tag.name}
+                      </Link>
                     </Button>
                   ))}
                   <div className="mt-3">

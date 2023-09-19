@@ -12,8 +12,12 @@ import { allTags } from "@/constants";
 import axios from "axios";
 import localFont from "next/font/local";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
+const myFontSuperBold = localFont({
+  src: "../../sohne-superBold.otf",
+});
 const myFontBold = localFont({
   src: "../../sohne-bold.otf",
 });
@@ -43,8 +47,10 @@ const Tag = async ({ params }: any) => {
 
   const data = await getPostByTag(slug);
 
-  //   only get first two post to display in the large card(main card)
-  const firstTwoPost = data?.slice(0, 2);
+  //  get the first and second highest views post
+  const getTwoMaxView = data
+    ?.sort((a: any, b: any) => b.view - a.view)
+    .slice(0, 2);
 
   //   get read time of post
   const getReadTime = (content: string) => {
@@ -80,8 +86,10 @@ const Tag = async ({ params }: any) => {
     <section>
       <div className="border-b border-[#F2F2F2]">
         <div className="px-6 max-w-6xl mt-10 pb-12 mx-auto flex flex-col w-fit text-center">
-          <h2 className={`text-2xl ${myFontBold.className}`}>{title}</h2>
-          <div className="mt-3 mb-6 text-[#6B6B6B] text-sm flex items-center gap-2">
+          <h2 className={`text-2xl ${myFontBold.className} md:text-5xl`}>
+            {title}
+          </h2>
+          <div className="mt-3 mb-6 text-[#6B6B6B] text-sm md:text-base flex items-center gap-2">
             <span>Topic</span>
             <span className={`text-xl`}>·</span>
             <span>2.5M Followers</span>
@@ -95,11 +103,11 @@ const Tag = async ({ params }: any) => {
       </div>
 
       <div className="px-6 max-w-6xl mx-auto">
-        <h4 className={`my-10 ${myFontBold.className} text-xl`}>
+        <h4 className={`my-10 ${myFontBold.className} text-xl md:text-2xl`}>
           Recommended stories
         </h4>
-        <div className="flex flex-col gap-8 ">
-          {firstTwoPost?.map((post: any) => (
+        <div className="flex flex-col gap-8 md:grid md:grid-cols-2 md:gap-12">
+          {getTwoMaxView?.map((post: any) => (
             <div
               key={post.id}
               className="flex flex-col  border-b border-[#F2F2F2] pb-7"
@@ -107,14 +115,14 @@ const Tag = async ({ params }: any) => {
               <div className="max-h-fit w-full bg-slate-200 overflow-hidden rounded-sm">
                 <Image
                   //   src={post.image}
-                  //   src={"https://github.com/shadcn.png"}
+                  // src={"https://github.com/shadcn.png"}
                   src={
                     "https://miro.medium.com/v2/resize:fit:679/1*NskIlAAM5A1U7uqGgxC6Lg.jpeg"
                   }
                   width={1000}
                   height={1000}
                   alt={post.title}
-                  className="w-full h-full object-cover aspect-w-2 aspect-h-2"
+                  className="w-full h-48 min-[538px]:h-56 sm:h-72 object-cover aspect-[2/2]"
                 />
               </div>
               <div className="flex gap-2 mt-6">
@@ -130,9 +138,14 @@ const Tag = async ({ params }: any) => {
                 <span>{post.author.username}</span>
               </div>
               <div className="mt-4">
-                <p className={`${myFontBold.className} line-clamp-2 text-xl`}>
+                <Link
+                  href={`/post/${post.title
+                    .replace(/\s+/g, "-")
+                    .replace(/\?/g, "-")}${post.id}`}
+                  className={`${myFontSuperBold.className} line-clamp-2 text-xl md:text-2xl`}
+                >
                   {post.title}
-                </p>
+                </Link>
                 <p className="text-[#6B6B6B] text-base mt-2 line-clamp-2">
                   {post.subTitle}
                 </p>
