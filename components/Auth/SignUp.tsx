@@ -2,17 +2,14 @@
 
 import localFont from "next/font/local";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 
 import GoogleIcon from "../icons/GoogleIcon";
 import FacebookIcon from "../icons/FacebookIcon";
 import Image from "next/image";
 import TwitterIcon from "../icons/twitter.png";
-import axios from "axios";
-import Swal from "sweetalert2";
-import EyeIcon from "../icons/EyeIcon";
-import EyeSlashIcon from "../icons/EyeSlashIcon";
+import { signIn } from "next-auth/react";
 
 const myFont = localFont({
   src: "../../app/super.otf",
@@ -40,49 +37,6 @@ const sigInOptions = [
 ];
 
 const SignUp = ({ setIsRegister, setIsLogin }: any) => {
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-
-  const [usernameError, setUsernameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [hidePassword, setHidePassword] = useState(true);
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    try {
-      setEmailError("");
-      setUsernameError("");
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/register`,
-        {
-          username: user.username,
-          email: user.email,
-          password: user.password,
-        }
-      );
-
-      Swal.fire({
-        title: "Register Success",
-        text: "Please Login",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
-      setIsRegister(false);
-      setIsLogin(true);
-    } catch (error) {
-      if (error?.response?.status === 409) {
-        setUsernameError(error?.response?.data?.message);
-      } else if (error?.response?.status === 422) {
-        setEmailError(error?.response?.data?.message);
-      }
-    }
-  };
-
   return (
     <section
       className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex"
@@ -95,116 +49,11 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
         }
       }}
     >
-      <div className="md:max-w-2xl w-full lg:h-[820px] bg-white shadow-lg py-11 px-14 h-screen m-auto">
+      <div className="h-screen w-full md:max-w-xl lg:h-fit bg-white shadow-lg py-11 px-14  m-auto">
         <div>
           <p className={`text-3xl text-center ${myFont.className} mb-12`}>
             Join Medium.
           </p>
-
-          <form className="space-y-3" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-neutral-600"
-              >
-                Username
-              </label>
-              <div className="mt-1">
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  placeholder="Your Username"
-                  className="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
-                  value={user.username}
-                  onChange={(e) =>
-                    setUser({ ...user, username: e.target.value })
-                  }
-                />
-              </div>
-              {usernameError && (
-                <p className="text-red-500 mt-1 text-sm">{usernameError}</p>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-neutral-600"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="Your Email"
-                  className="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
-                  value={user.email}
-                  onChange={(e) => setUser({ ...user, email: e.target.value })}
-                />
-                {emailError && (
-                  <p className="text-red-500 mt-1 text-sm">
-                    {emailError}. Try to{" "}
-                    <Link href={"/"} className="underline">
-                      Login
-                    </Link>{" "}
-                    instead
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-neutral-600"
-              >
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={hidePassword ? "password" : "text"}
-                  required
-                  autoComplete="current-password"
-                  placeholder="Your Password"
-                  className=" block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
-                  value={user.password}
-                  onChange={(e) =>
-                    setUser({ ...user, password: e.target.value })
-                  }
-                />
-                <div
-                  className="absolute right-0 top-0 mt-3 mr-4 cursor-pointer"
-                  onClick={() => setHidePassword((prev) => !prev)}
-                >
-                  {hidePassword ? <EyeIcon /> : <EyeSlashIcon />}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Button className="flex w-full items-center justify-center px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Sign up
-              </Button>
-            </div>
-          </form>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 text-neutral-600 bg-white">
-                Or continue with
-              </span>
-            </div>
-          </div>
 
           <div className="flex justify-center flex-col items-center gap-3">
             {sigInOptions.map((option) => (
@@ -225,7 +74,12 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
                     option.icon
                   )}
                 </div>
-                <span className="ml-2">Sign up with {option.name}</span>
+                <span
+                  className="ml-2"
+                  onClick={() => option.name === "Google" && signIn("google")}
+                >
+                  Sign up with {option.name}
+                </span>
               </Button>
             ))}
           </div>
