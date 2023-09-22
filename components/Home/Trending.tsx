@@ -32,10 +32,25 @@ const myFontSuperBold = localFont({
 });
 
 const getPostTrending = async () => {
-  const { data } = await axios.get(
+  // const { data } = await axios.get(
+  //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts/trending`,
+  //   { withCredentials: true }
+  // );
+
+  const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts/trending`,
-    { withCredentials: true }
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: {
+        revalidate: 0,
+      },
+    }
   );
+
+  const data = await res.json();
 
   return data;
 };
@@ -74,7 +89,7 @@ const Trending = async () => {
         </div>
 
         <div className="md:grid md:gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {datas?.posts?.map((post: PostTrendingProps, i: number) => (
+          {datas?.map((post: PostTrendingProps, i: number) => (
             <div key={post.id}>
               <div className="flex gap-4 mb-6">
                 <span
@@ -118,16 +133,14 @@ const Trending = async () => {
                           </span>
                         </div>
                         <p className="text-sm line-clamp-4 mt-2">
-                          {/* {trending.descriptionAuthor} */}
+                          {post.user.bio}
                         </p>
                         <div className="flex justify-between items-center border-t mt-2 pt-2 border-[#f2f2f2]">
-                          {/* <span className="text-muted">
-                            {`${
-                              Number(trending.authorFollowers) > 2
-                                ? `${trending.authorFollowers} followers`
-                                : `${trending.authorFollowers} follower`
-                            }`}
-                          </span> */}
+                          {post.user.follower.length > 2 ? (
+                            <span className="text-muted">{`${post.user.follower.length} followers`}</span>
+                          ) : (
+                            <span className="text-muted">{`${post.user.follower.length} follower`}</span>
+                          )}
                           <Button className="bg-[#1a8917] text-white rounded-full hover:bg-[#156912] w-fit">
                             Follow
                           </Button>
