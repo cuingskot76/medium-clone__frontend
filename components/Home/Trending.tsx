@@ -2,8 +2,6 @@ import React from "react";
 import ChartUp from "../icons/ChartUp";
 import localFont from "next/font/local";
 
-import Image from "next/image";
-import { dummyTrendings } from "../../constants/index";
 import {
   HoverCard,
   HoverCardContent,
@@ -17,11 +15,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
-import axios from "axios";
 import { PostTrendingProps } from "@/types";
 import StarIcon from "../icons/StarIcon";
+import { getReadTime, getTimeAgo } from "@/utils";
 
 const myFontBold = localFont({
   src: "../../app/sohne-bold.otf",
@@ -32,18 +30,9 @@ const myFontSuperBold = localFont({
 });
 
 const getPostTrending = async () => {
-  // const { data } = await axios.get(
-  //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts/trending`,
-  //   { withCredentials: true }
-  // );
-
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts/trending`,
     {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
       next: {
         revalidate: 0,
       },
@@ -57,26 +46,6 @@ const getPostTrending = async () => {
 
 const Trending = async () => {
   const datas = await getPostTrending();
-
-  //   get read time of post
-  const getReadTime = (content: string) => {
-    const wordsPerMinute = 200;
-    // remove all the spaces
-    const wordCount = content.trim().split(/\s+/g).length;
-    const readTime = Math.ceil(wordCount / wordsPerMinute);
-    return readTime;
-  };
-
-  //   get post time published
-  // e.g. Sep 10
-  const getPostDate = (date: string) => {
-    const time = new Date(date).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-
-    return time;
-  };
 
   return (
     <section className="border-b border-[#f2f2f2]">
@@ -99,55 +68,64 @@ const Trending = async () => {
                 </span>
 
                 <div>
-                  <div className="flex mb-2 gap-2 items-center">
-                    <Link href={"/"}>
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage
-                          src={post.user.image}
-                          alt={post.user.name}
-                          width={100}
-                          height={100}
-                        />
-                        <Skeleton className="h-6 w-6 rounded-full bg-slate-300" />
-                      </Avatar>
-                    </Link>
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <Link href={"/"} className="text-sm">
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Link
+                        href={`/user/@${post.user.name.replace(/\s+/g, "-")}`}
+                        className="text-sm flex mb-2 gap-2 items-center"
+                      >
+                        <Avatar className="w-6 h-6">
+                          <AvatarImage
+                            src={post.user.image}
+                            alt={post.user.name}
+                            width={100}
+                            height={100}
+                            className="opacity-80 hover:opacity-100"
+                          />
+                          <Skeleton className="h-6 w-6 rounded-full bg-slate-300" />
+                        </Avatar>
+                        <span>{post.user.name}</span>
+                      </Link>
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <Link
+                        href={`/user/@${post.user.name.replace(/\s+/g, "-")}`}
+                        className="flex items-center gap-2"
+                      >
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage
+                            src={post.user.image}
+                            alt={post.user.name}
+                            width={100}
+                            height={100}
+                          />
+                          <Skeleton className="h-10 w-10 rounded-full bg-slate-300" />
+                        </Avatar>
+                        <span className={`text-base ${myFontBold.className}`}>
                           {post.user.name}
-                        </Link>
-                      </HoverCardTrigger>
-                      <HoverCardContent>
-                        <div className="flex items-center gap-2">
-                          <Avatar className="w-10 h-10">
-                            <AvatarImage
-                              src={post.user.image}
-                              alt={post.user.name}
-                              width={100}
-                              height={100}
-                            />
-                            <Skeleton className="h-10 w-10 rounded-full bg-slate-300" />
-                          </Avatar>
-                          <span className={`text-base ${myFontBold.className}`}>
-                            {post.user.name}
-                          </span>
-                        </div>
-                        <p className="text-sm line-clamp-4 mt-2">
-                          {post.user.bio}
-                        </p>
-                        <div className="flex justify-between items-center border-t mt-2 pt-2 border-[#f2f2f2]">
-                          {post.user.follower.length > 2 ? (
-                            <span className="text-muted">{`${post.user.follower.length} followers`}</span>
-                          ) : (
-                            <span className="text-muted">{`${post.user.follower.length} follower`}</span>
-                          )}
-                          <Button className="bg-[#1a8917] text-white rounded-full hover:bg-[#156912] w-fit">
-                            Follow
-                          </Button>
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </div>
+                        </span>
+                      </Link>
+                      <p className="text-sm line-clamp-4 mt-2">
+                        {post.user.bio}
+                      </p>
+                      <div className="flex justify-between items-center border-t mt-2 pt-2 border-[#f2f2f2]">
+                        {post.user.follower ? (
+                          <>
+                            {post.user.follower.length > 2 ? (
+                              <span className="text-muted">{`${post.user.follower.length} followers`}</span>
+                            ) : (
+                              <span className="text-muted">{`${post.user.follower.length} follower`}</span>
+                            )}
+                            <Button className="bg-[#1a8917] text-white rounded-full hover:bg-[#156912] w-fit">
+                              Follow
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="text-muted">0 followers</span>
+                        )}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
                   <Link
                     href={`trending/${post.title.replace(/\s+/g, "-")}-${
                       post.id
@@ -157,7 +135,7 @@ const Trending = async () => {
                     {post.title}
                   </Link>
                   <div className="flex text-sm gap-2 items-center text-[#6b6b6b]">
-                    <span>{getPostDate(post.created_at)}</span>
+                    <span>{getTimeAgo(post.created_at)}</span>
                     <span className={`${myFontBold.className} text-xl`}>·</span>
                     <span>{`${getReadTime(post.content)} min read`}</span>
                     <TooltipProvider>

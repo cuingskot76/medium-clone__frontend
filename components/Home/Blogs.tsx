@@ -2,11 +2,19 @@ import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import localFont from "next/font/local";
-import { blogTags, discoverTags, dummyBlogs } from "@/constants";
+import { blogTags, discoverTags } from "@/constants";
 import Image from "next/image";
 import Bookmark from "../icons/Bookmark";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
+import { PostProps } from "@/types";
+import DefaultPostBanner from "@/public/images/medium.png";
+import { getLatestPosts, getReadTime, getTimeAgo } from "@/utils";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 const myFontBold = localFont({
   src: "../../app/sohne-bold.otf",
@@ -16,7 +24,20 @@ const myFontSuperBold = localFont({
   src: "../../app/sohne-superBold.otf",
 });
 
-const Blogs = () => {
+const getAllPosts = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts`);
+
+  const data = await res.json();
+
+  return data;
+};
+
+const Blogs = async () => {
+  const posts: PostProps[] = await getAllPosts();
+
+  const latestPosts = getLatestPosts(posts);
+  console.log("latest", latestPosts);
+
   return (
     <section className="px-7 md:px-12 max-w-screen-xl m-auto">
       <div className="lg:flex lg:flex-row-reverse lg:gap-14">
@@ -61,76 +82,119 @@ const Blogs = () => {
         {/* blogs */}
         <div className="pt-10 lg:pt-14">
           <div>
-            {dummyBlogs.map((blog, i) => (
+            {latestPosts.map((post, i) => (
               <div
-                key={blog.title + i}
+                key={post.title}
                 className="flex mb-12 justify-between gap-5 items-center"
               >
                 <div className="flex-1">
-                  <div className="gap-2 flex items-center mb-2">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        alt={blog?.title}
-                      />
-                      {/* <AvatarFallback>{blog?.author}</AvatarFallback> */}
-                      <Skeleton className="h-8 w-8 rounded-full bg-slate-300" />
-                    </Avatar>
-                    {/* <div className="w-5 h-5">
-                      <Image
-                        src={blog.image}
-                        alt={blog.title}
-                        width={20}
-                        height={20}
-                      />
-                    </div> */}
-                    <span className="text-sm">{blog.author}</span>
-                  </div>
-                  <h3
-                    className={`text-base md:text-xl line-clamp-2 ${myFontSuperBold.className}`}
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Link
+                        href={`/user/@${post.user.name.replace(/\s+/g, "-")}`}
+                        className="text-sm flex mb-2 gap-2 items-center"
+                      >
+                        <Avatar className="w-6 h-6">
+                          <AvatarImage
+                            src={post.user.image}
+                            alt={post.user.name}
+                            width={100}
+                            height={100}
+                            className="opacity-80 hover:opacity-100"
+                          />
+                          <Skeleton className="h-6 w-6 rounded-full bg-slate-300" />
+                        </Avatar>
+                        <span>{post.user.name}</span>
+                      </Link>
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <Link
+                        href={`/user/@${post.user.name.replace(/\s+/g, "-")}`}
+                        className="flex items-center gap-2"
+                      >
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage
+                            src={post.user.image}
+                            alt={post.user.name}
+                            width={100}
+                            height={100}
+                          />
+                          <Skeleton className="h-10 w-10 rounded-full bg-slate-300" />
+                        </Avatar>
+                        <span className={`text-base ${myFontBold.className}`}>
+                          {post.user.name}
+                        </span>
+                      </Link>
+                      <p className="text-sm line-clamp-4 mt-2">
+                        {post.user.bio}
+                      </p>
+                      <div className="flex justify-between items-center border-t mt-2 pt-2 border-[#f2f2f2]">
+                        {post.user.follower ? (
+                          <>
+                            {post.user.follower.length > 2 ? (
+                              <span className="text-muted">{`${post.user.follower.length} followers`}</span>
+                            ) : (
+                              <span className="text-muted">{`${post.user.follower.length} follower`}</span>
+                            )}
+                            <Button className="bg-[#1a8917] text-white rounded-full hover:bg-[#156912] w-fit">
+                              Follow
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="text-muted">0 followers</span>
+                        )}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+
+                  <Link
+                    href={`/post/${post.title.replace(/\s+/g, "-")}-${post.id}`}
                   >
-                    {blog.title}
-                  </h3>
-                  <p className="hidden text-base text-muted md:line-clamp-2 pt-1">
-                    {blog.description}
-                  </p>
-                  <div className="pt-1 flex items-center justify-between">
+                    <h3
+                      className={`text-base md:text-xl line-clamp-2 ${myFontSuperBold.className}`}
+                    >
+                      {post.title}
+                    </h3>
+                    <p className="hidden text-base text-muted md:line-clamp-2 pt-1">
+                      {post.subTitle}
+                    </p>
+                  </Link>
+                  <div className="pt-4 flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <span className="text-sm text-[#6b6b6b]">
-                        {blog.date}
+                        {getTimeAgo(post.created_at)}
                       </span>
-                      <span className={`${myFontBold.className} text-xl`}>
-                        ·
-                      </span>
+                      <span>·</span>
                       <span className="text-sm text-[#6b6b6b]">
-                        {blog.readTime}
+                        {getReadTime(post.content)} min read
                       </span>
-                      <span
-                        className={`${myFontBold.className} hidden sm:block text-xl`}
-                      >
-                        ·
-                      </span>
+                      <span>·</span>
                       <Link
-                        href={"/"}
+                        href={`/tag/${post.category.name.replace(/\s+/g, "-")}`}
                         className="hidden sm:block text-muted py-[2px] px-2 border border-[#f2f2f2] rounded-full bg-[#f2f2f2] text-xs"
                       >
-                        {blog.tag}
+                        {post.category.name}
                       </Link>
-                      <span>{blog.isPremium}</span>
+                      <span>{post.premium}</span>
                     </div>
                     <Bookmark />
                   </div>
                 </div>
 
-                <div className="w-24 h-24 sm:w-36 sm:h-28 md:w-52 md:h-36 overflow-hidden object-cover flex justify-center">
+                <Link
+                  href={`/post/${post.title}-${post.id}`}
+                  className="w-24 h-24 sm:w-36 sm:h-28 md:w-52 md:h-36 overflow-hidden object-cover flex justify-center"
+                >
                   <Image
-                    src={blog.image}
-                    alt={blog.title}
-                    width={200}
-                    height={150}
-                    className="object-cover transition-all duration-300 ease-in-out hover:scale-110"
+                    src={
+                      post.imageBanner ? post.imageBanner : DefaultPostBanner
+                    }
+                    alt={post.title}
+                    width={500}
+                    height={500}
+                    className="object-contain transition-all duration-300 ease-in-out hover:scale-110"
                   />
-                </div>
+                </Link>
               </div>
             ))}
           </div>
