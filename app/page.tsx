@@ -4,7 +4,7 @@ import Image from "next/image";
 import localFont from "next/font/local";
 import Trending from "@/components/Home/Trending";
 import Blogs from "@/components/Home/Blogs";
-import Navbar from "@/components/Navbar";
+import NavbarHome from "@/components/NavbarHome";
 
 const myFont = localFont({
   src: "./super.otf",
@@ -13,7 +13,7 @@ const myFont = localFont({
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <NavbarHome />
       <section>
         <div className="bg-yellow border-b border-dark overflow-hidden">
           <div className="relative">

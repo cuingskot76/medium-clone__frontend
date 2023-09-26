@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import localfont from "next/font/local";
-import Navbar from "../components/Navbar";
 import Provider from "./Provider";
 
 const myFont = localfont({
@@ -26,10 +25,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <Provider>
-        <body className={myFont.className}>
-          {/* <Navbar /> */}
-          {children}
-        </body>
+        <body className={myFont.className}>{children}</body>
       </Provider>
     </html>
   );
