@@ -39,7 +39,7 @@ const sigInOptions = [
 const SignUp = ({ setIsRegister, setIsLogin }: any) => {
   return (
     <section
-      className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex"
+      className="absolute z-50 top-0 right-0 left-0 transparent-bg h-screen m-auto md:flex "
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           e.stopPropagation();
@@ -49,7 +49,7 @@ const SignUp = ({ setIsRegister, setIsLogin }: any) => {
         }
       }}
     >
-      <div className="h-screen w-full md:max-w-xl lg:h-fit bg-white shadow-lg py-11 px-14  m-auto">
+      <div className="h-screen w-full md:max-w-xl lg:h-fit bg-white shadow-lg py-11 px-14  m-auto flex items-center">
         <div>
           <p className={`text-3xl text-center ${myFont.className} mb-12`}>
             Join Medium.
