@@ -13,7 +13,7 @@ import Bookmark from "@/components/icons/Bookmark";
 import MinIcon from "@/components/icons/MinIcon";
 import TripleDotIcon from "@/components/icons/TripleDotIcon";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/Navbar";
+import NavbarSuccessAuth from "@/components/NavbarSuccessAuth";
 
 const myFontBold = localFont({
   src: "../../app/sohne-bold.otf",
@@ -30,9 +30,9 @@ const myFontSerif = localFont({
 const Dashboard = async () => {
   return (
     <>
-      <Navbar />
+      <NavbarSuccessAuth />
       <section className="max-w-screen-xl md:max-w-3xl md:mx-auto lg:max-w-screen-xl px-5 ">
-        <div className="flex items-center gap-8 h-12 mt-5 border-b border-[#F2F2F2] pb-2 sticky top-0 left-0 right-0 bg-white">
+        <div className="flex items-center gap-8 h-16 mt-5 border-b border-[#F2F2F2] pb-2 sticky top-0 left-0 right-0 bg-white z-10">
           <PlusIcon />
           <span className="text-sm">For you</span>
           <span className="text-sm">Following</span>
@@ -43,7 +43,7 @@ const Dashboard = async () => {
             {dummyBlogs.map((blog, i) => (
               <div
                 key={blog.title + i}
-                className="flex pt-6 justify-between gap-5 items-center md:border-b md:border-[#F2F2F2] pb-8"
+                className="flex pt-6 justify-between gap-5 items-center border-b border-[#F2F2F2] pb-8"
               >
                 <div className="w-full md:hidden lg:block">
                   <div className="gap-2 flex items-center mb-3">
