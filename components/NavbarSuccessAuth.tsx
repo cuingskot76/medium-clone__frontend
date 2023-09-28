@@ -11,8 +11,6 @@ import PencilIcon from "./icons/PencilIcon";
 import ChevronDownIcon from "./icons/ChevronDownIcon";
 import SignIn from "./Auth/SignIn";
 import SignUp from "./Auth/SignUp";
-import jwt_decode from "jwt-decode";
-import { UserProps } from "@/types";
 import ArrowUp from "./icons/ArrowUp";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import ProfileIcon from "./icons/ProfileIcon";
@@ -46,7 +44,7 @@ const NavbarSuccessAuth = () => {
   }, [scrollPos]);
 
   const { data: session, status, update } = useSession();
-  console.log(session, status);
+  // console.log(session, status);
 
   if (status === "loading") {
     return (
