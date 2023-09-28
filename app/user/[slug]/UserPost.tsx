@@ -3,42 +3,33 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import DefaultPostBanner from "@/public/images/medium.png";
+import { Button } from "@/components/ui/button";
+import { getReadTime, getTimeAgo } from "@/utils";
+import Bookmark from "@/components/icons/Bookmark";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PostProps } from "@/types";
 
 const myFontBold = localFont({
   src: "../../sohne-bold.otf",
 });
 
-const UserPost = ({ id, title, created_at, username, imageBanner }: any) => {
-  const getTimeAgo = (timestamp: string): string => {
-    const now = new Date();
-    const date = new Date(timestamp);
-    const diff = now.getTime() - date.getTime();
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0 && days <= 7) {
-      return `${days} days ago`;
-    } else if (days > 7) {
-      return new Date(timestamp).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    } else if (hours > 0) {
-      return `${hours} hours ago`;
-    } else if (minutes > 0) {
-      return `${minutes} minutes ago`;
-    } else {
-      return `${seconds} seconds ago`;
-    }
-  };
-
+const UserPost = ({
+  id,
+  title,
+  content,
+  created_at,
+  username,
+  imageBanner,
+  category: { name },
+}: any) => {
   return (
-    <div className="mt-5">
+    <div className="mt-5 border-b border-[#F2F2F2] pb-4">
       <span className="text-[#6B6B6B] text-sm">{getTimeAgo(created_at)}</span>
-
       <div className="flex justify-between gap-6">
         <Link
           href={`/user/@${username.replace(/\s+/g, "-")}/${title.replace(
@@ -50,7 +41,6 @@ const UserPost = ({ id, title, created_at, username, imageBanner }: any) => {
             {title}
           </h3>
         </Link>
-
         <Link
           href={`/user/@${username.replace(/\s+/g, "-")}/${title.replace(
             /\s+/g,
@@ -67,6 +57,31 @@ const UserPost = ({ id, title, created_at, username, imageBanner }: any) => {
             />
           </div>
         </Link>
+      </div>
+      <div className="flex justify-between items-center mt-4">
+        <div className="flex gap-2 items-center">
+          <Button
+            variant={"outline"}
+            className="text-sm text-dark mr-2 bg-[#f2f2f2] p-0 m-0 rounded-full w-fit h-fit py-1 px-2 border border-[#f2f2f2]"
+          >
+            <Link href={`/tag/${name}`}>{name}</Link>
+          </Button>
+          <span className="text-sm text-[#6B6B6B]">
+            {getReadTime(content)} min read
+          </span>
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="cursor-pointer">
+                <Bookmark />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-slate-700 text-slate-100">
+              <span>Bookmark story</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
