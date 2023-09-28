@@ -15,6 +15,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import StarIcon from "../icons/StarIcon";
 
 const myFontBold = localFont({
   src: "../../app/sohne-bold.otf",
@@ -25,7 +32,11 @@ const myFontSuperBold = localFont({
 });
 
 const getAllPosts = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/posts`, {
+    next: {
+      revalidate: 0,
+    },
+  });
 
   const data = await res.json();
 
@@ -36,7 +47,6 @@ const Blogs = async () => {
   const posts: PostProps[] = await getAllPosts();
 
   const latestPosts = getLatestPosts(posts);
-  console.log("latest", latestPosts);
 
   return (
     <section className="px-7 md:px-12 max-w-screen-xl m-auto">
@@ -168,14 +178,25 @@ const Blogs = async () => {
                       <span className="text-sm text-[#6b6b6b]">
                         {getReadTime(post.content)} min read
                       </span>
-                      <span>·</span>
+                      <span className="hidden sm:block">·</span>
                       <Link
                         href={`/tag/${post.category.name.replace(/\s+/g, "-")}`}
                         className="hidden sm:block text-muted py-[2px] px-2 border border-[#f2f2f2] rounded-full bg-[#f2f2f2] text-xs"
                       >
                         {post.category.name}
                       </Link>
-                      <span>{post.premium}</span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                              {post.premium && <StarIcon />}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span>Member-only story</span>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                     <Bookmark />
                   </div>
