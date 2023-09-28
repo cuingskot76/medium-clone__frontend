@@ -20,7 +20,7 @@ const myFontBold = localFont({
   src: "../../sohne-bold.otf",
 });
 
-export default function DashboardLayout({
+export default function TrendingPostLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -33,11 +33,14 @@ export default function DashboardLayout({
             <p className="mr-2 text-sm text-[#6B6B6B]">Open in app</p>
             <ArrowUp />
           </Link>
-          <div className="text-sm gap-2 md:flex md:justify-end md:w-full lg:hidden">
-            <Button className="bg-[#1a8917] text-white hover:bg-[#156912] rounded-full">
+          <div className="text-sm gap-5 md:flex md:justify-end md:w-full lg:hidden">
+            <Button className="bg-[#1a8917] text-white hover:bg-[#156912] rounded-full p-0 m-0 w-fit h-fit py-1 px-2 mr-2 md:mr-0">
               Sign up
             </Button>
-            <Button variant={"ghost"} className="text-[#6B6B6B] rounded-full">
+            <Button
+              variant={"ghost"}
+              className="text-[#6B6B6B] rounded-full  p-0 m-0 w-fit h-fit py-1 px-2"
+            >
               Sign In
             </Button>
           </div>
